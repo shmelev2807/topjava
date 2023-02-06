@@ -66,25 +66,21 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesInDate = new HashMap<>();
 
-        List<UserMeal> mealsWithTimeInRange = meals.stream()
-                .peek(meal -> caloriesInDate
-                        .merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum))
-                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
+        Map<LocalDate, Integer> caloriesSumPerDate = meals.stream()
+                .collect(
+                        Collectors.groupingBy(UserMeal::getDate, Collectors.summingInt(UserMeal::getCalories)));
+//                        Collectors.toMap(UserMeal::getDate, UserMeal::getCalories, Integer::sum));
+        return meals.stream().filter(m -> TimeUtil.isBetweenHalfOpen(m.getDateTime().toLocalTime(), startTime, endTime))
+                .map(m -> toUserMealWithExcess(m, caloriesSumPerDate.get(m.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
+    }
 
-        return mealsWithTimeInRange.stream()
-                .map(meal -> {
-                    LocalDateTime userMealDateTime = meal.getDateTime();
-                    LocalDate userMealDate = meal.getDateTime().toLocalDate();
-                    int caloriesInMeal = meal.getCalories();
-                    boolean caloriesIsExcess = caloriesInDate.get(userMealDate) > caloriesPerDay;
-
-                    return new UserMealWithExcess(userMealDateTime,
-                                    meal.getDescription(),
-                                    caloriesInMeal,
-                                    caloriesIsExcess);})
-                .collect(Collectors.toList());
+    public static UserMealWithExcess toUserMealWithExcess(UserMeal userMeal, boolean excess) {
+        return new UserMealWithExcess(
+                userMeal.getDateTime(),
+                userMeal.getDescription(),
+                userMeal.getCalories(),
+                excess);
     }
 }

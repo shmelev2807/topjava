@@ -20,11 +20,32 @@ public class UserMealWithExcess {
 
     @Override
     public String toString() {
-        return "UserMealWithExcess{" +
+        return "MealTo{" +
+                "id=" + id +
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public boolean isExcess() {
+        return excess;
     }
 }

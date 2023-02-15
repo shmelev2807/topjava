@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 
-public class MealRepositoryImpl{
+public class MealRepositoryImpl implements MealRepository{
     private static MealRepositoryImpl instance;
     private static int counter = 0;
     private static Map<Integer, Meal> meals;
@@ -33,11 +33,12 @@ public class MealRepositoryImpl{
         instance.save(new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
+    @Override
     public List<Meal> getAll() {
         return new ArrayList<>(meals.values());
     }
 
-
+    @Override
     public void save(Meal meal) {
         int id = meal.getId();
         if (id == 0) {
@@ -47,9 +48,14 @@ public class MealRepositoryImpl{
         meals.put(id, meal);
     }
 
-
+    @Override
     public void deleteById(int id) {
         meals.remove(id);
+    }
+
+    @Override
+    public Meal getById(int id) {
+        return meals.get(id);
     }
 
 }

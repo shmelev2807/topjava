@@ -1,7 +1,3 @@
-<%@ page import="ru.javawebinar.topjava.model.Meal" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="ru.javawebinar.topjava.model.MealTo" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="ru">
@@ -12,31 +8,36 @@
 <h2><a href="index.html">Home</a></h2>
 <hr>
 <h1>Meals</h1>
-<h3>Add meal</h3>
-<table border ="1">
+<h3><a href="meal.jsp">Add meal</a></h3>
+<table border=1>
+    <thead>
     <tr>
-        <th><b>Date</b></th>
-        <th><b>Description</b></th>
-        <th><b>Calories</b></th>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Calories</th>
+        <th> </th>
+        <th> </th>
     </tr>
-    <%
-        ArrayList<MealTo> meals =
-            (ArrayList<MealTo>)request.getAttribute("meals");
-        for(MealTo m:meals){
-            if(m.isExcess()) {
-                request.setAttribute("color", "red");
-            } else {
-                request.setAttribute("color", "green");
-            }
-        %>
-        <td><font color="${color}"><%=m.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))%></font></td>
-        <td><font color="${color}"><%=m.getDescription()%></font></td>
-        <td><font color="${color}"><%=m.getCalories()%></font></td>
-    </tr>
-    <%}%>
+    </thead>
+    <tbody>
+    <c:forEach items="${meals}" var="meal">
+
+            <c:set var="excess" value="${meal.excess}" />
+            <c:set var="color" value="green" />
+            <c:if test="${excess==true}">
+                    <c:set var="color" value="red" />
+            </c:if>
+
+            <td><font color="${color}"><c:out value="${meal.dateTime}" /></font ></td>
+            <td><font color="${color}"><c:out value="${meal.description}" /></font ></td>
+            <td><font color="${color}"><c:out value="${meal.calories}" /></font ></td>
+            <td><a href="meals?action=edit&mealId=<c:out value="${meal.id}"/>">Update</a></td>
+            <td><a href="meals?action=delete&mealId=<c:out value="${meal.id}"/>">Delete</a></td>
+        </tr>
+    </c:forEach>
+    </tbody>
 </table>
 <hr>
-
 </body>
 </html>
 

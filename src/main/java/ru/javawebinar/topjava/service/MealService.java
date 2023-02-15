@@ -9,4 +9,6 @@ public interface MealService {
     public void save(MealTo mealTo);
     public void deleteById(int id);
 
+    public MealTo getById(int id);
+
 }
